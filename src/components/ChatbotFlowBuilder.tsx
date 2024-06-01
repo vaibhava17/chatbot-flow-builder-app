@@ -14,7 +14,16 @@ import ReactFlow, {
   Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { initialNodes, initialEdges } from "../utils/initialElements";
+import {
+  initialNodes,
+  initialEdges,
+  NodeStyles,
+} from "../utils/initialElements";
+import CustomNode from "./CustomNode";
+
+const nodeTypes = {
+  input: CustomNode,
+};
 
 const ChatbotFlowBuilder: React.FC = () => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
@@ -51,9 +60,13 @@ const ChatbotFlowBuilder: React.FC = () => {
 
     const newNode = {
       id: `${type}-${nodes.length + 1}`,
-      type: "default",
+      type: type,
       position,
-      data: { label: `${type} Node` },
+      data: {
+        label: "Send Message",
+        value: "textNode",
+      },
+      style: NodeStyles,
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
     };
@@ -72,6 +85,7 @@ const ChatbotFlowBuilder: React.FC = () => {
         onNodeClick={(event, node) => setSelectedNode(node)}
         onDragOver={onDragOver}
         onDrop={onDrop}
+        nodeTypes={nodeTypes}
         className="w-screen"
       >
         {/* <MiniMap />

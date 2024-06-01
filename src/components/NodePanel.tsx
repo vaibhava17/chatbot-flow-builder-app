@@ -30,7 +30,7 @@ const NodePanel: React.FC = () => {
         return (
           <div
             className="p-2 mb-2 bg-white border border-gray-300 cursor-grab flex flex-col items-center"
-            onDragStart={(event) => onDragStart(event, item.name)}
+            onDragStart={(event) => onDragStart(event, item.type)}
             draggable
             key={i}
           >
