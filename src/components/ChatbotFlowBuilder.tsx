@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -26,21 +26,29 @@ const nodeTypes = {
 };
 
 interface ChatbotFlowBuilderProps {
-  selectedNode: Node | null;
   setSelectedNode: (node: Node | null) => void;
-  onNodeChange: (node: Node) => void;
   nodes: Node[];
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setHasAllEdges: React.Dispatch<React.SetStateAction<boolean>>;
+  setMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
-  selectedNode,
   setSelectedNode,
-  onNodeChange,
   nodes,
   setNodes,
+  setHasAllEdges,
+  setMessage,
 }) => {
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
+
+  useEffect(() => {
+    const allNodesHaveEdges = nodes.every((node) => {
+      if (node.id == "input-1") return true;
+      else return edges.some((edge) => edge.target === node.id);
+    });
+    setHasAllEdges(allNodesHaveEdges);
+  }, [nodes, edges]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -48,11 +56,21 @@ const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
   );
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
+    [setEdges]
   );
+
   const onConnect = useCallback(
-    (params: Edge<any> | Connection) => setEdges((eds) => addEdge(params, eds)),
-    []
+    (params: Edge<any> | Connection) => {
+      const { source } = params;
+
+      if (source && edges.some((edge) => edge.source === source)) {
+        setMessage("Error: A node can only have one outgoing edge.");
+        return;
+      }
+
+      setEdges((eds) => addEdge(params, eds));
+    },
+    [edges]
   );
 
   const onDragOver = (event: React.DragEvent) => {
@@ -106,24 +124,18 @@ const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
   };
 
   return (
-    <>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={handleNodeClick}
-        onConnect={onConnect}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        nodeTypes={nodeTypes}
-        className="w-screen"
-      >
-        {/* <MiniMap />
-        <Controls />
-        <Background /> */}
-      </ReactFlow>
-    </>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onNodeClick={handleNodeClick}
+      onConnect={onConnect}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      nodeTypes={nodeTypes}
+      className="w-screen"
+    />
   );
 };
 

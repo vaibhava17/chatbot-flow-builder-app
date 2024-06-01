@@ -7,16 +7,17 @@ import SettingsPanel from "@/components/SettingsPanel";
 import { ReactFlowProvider } from "reactflow";
 import { Node } from "reactflow";
 import { initialNodes, NodeStyles } from "../utils/initialElements";
+import clsx from "clsx";
 
 export default function Home() {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setMessage] = useState<string | null>(null);
+  const [hasAllEdges, setHasAllEdges] = useState<boolean>(false);
 
   const handleButtonClick = () => {
-    const nodesWithEmptyTargets = nodes.filter((node) => !node.targetPosition);
-    if (nodesWithEmptyTargets.length > 0) {
-      setError("Error: Node has empty target handles.");
+    if (!hasAllEdges) {
+      setMessage("Error: Cannot save flow");
     } else {
       setNodes((nds) =>
         nds.map((item) => {
@@ -30,7 +31,7 @@ export default function Home() {
           }
         })
       );
-      setError(null);
+      setMessage("Success: Flow saved successfully");
       setSelectedNode(null);
     }
   };
@@ -59,6 +60,7 @@ export default function Home() {
     );
     setSelectedNode(null);
   };
+
   return (
     <ReactFlowProvider>
       <main className="flex flex-col items-center h-screen">
@@ -70,11 +72,11 @@ export default function Home() {
         <div className="flex flex-row w-full h-full">
           <div className="w-full h-full">
             <ChatbotFlowBuilder
-              selectedNode={selectedNode}
               setSelectedNode={setSelectedNode}
-              onNodeChange={handleNodeChange}
               nodes={nodes}
               setNodes={setNodes}
+              setHasAllEdges={setHasAllEdges}
+              setMessage={setMessage}
             />
           </div>
           <div className="w-80 p-4 border-l border-gray-300 h-screen bg-gray-100">
@@ -89,9 +91,15 @@ export default function Home() {
             )}
           </div>
         </div>
-        {error && (
-          <div className="absolute bottom-4 left-4 p-2 bg-red-500 text-white rounded">
-            {error}
+        {alertMessage && (
+          <div
+            className={clsx(
+              "absolute bottom-4 left-4 p-2 text-white rounded",
+              alertMessage.includes("Error") && "bg-red-500",
+              alertMessage.includes("Success") && "bg-sky-500"
+            )}
+          >
+            {alertMessage}
           </div>
         )}
       </main>
