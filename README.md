@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Project Name
 
-## Getting Started
+Chatbot Flow Builder - [DEMO](https://chatbot-flow-builder-app.vercel.app/)
 
-First, run the development server:
+### Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The Chatbot Flow Builder project aims to provide a platform for users to create and visualize chatbot conversation flows easily. It offers a graphical interface where users can drag and drop nodes representing different chatbot components and connect them to define the flow of conversation. The project utilizes ReactJS with Next.js framework to build the frontend, providing a seamless user experience.
+
+### Folder Structure
+
+The project follows a typical Nextjs project structure:
+
+```
+project-root/
+│
+├── src/
+│   ├── components/
+│   │   ├── ChatbotFlowBuilder.tsx
+│   │   ├── CustomButton.tsx
+│   │   ├── CustomNode.tsx
+│   │   ├── Header.tsx
+│   │   ├── NodePanel.tsx
+│   │   └── SettingsPanel.tsx
+│   │
+│   ├── utils/
+│   │   ├── helper.ts
+│   │   └── initialElements.ts
+│   │
+│   └── app/
+│       ├── ...
+│       ├── layout.ts
+│       └── page.tsx      
+│ 
+├── ...
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Components
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### ChatbotFlowBuilder Component
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The ChatbotFlowBuilder component is the main component of the application responsible for rendering the graphical flow editor. It allows users to interactively create and modify chatbot conversation flows by adding, connecting, and configuring nodes.
 
-## Learn More
+#### NodePanel Component
 
-To learn more about Next.js, take a look at the following resources:
+The NodePanel component is responsible for rendering a sidebar panel that contains a list of available chatbot node types. Users can drag nodes from this panel and drop them onto the flow editor to add them to the conversation flow.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### SettingsPanel Component
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The SettingsPanel component displays a panel where users can view and modify the settings of a selected node. It allows users to change properties such as the text or behavior (future referance) of the node.
 
-## Deploy on Vercel
+### Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The project is deployed using GitHub Actions and Vercel. A GitHub Actions workflow is defined in the `.yml` file to automate the deployment process. The workflow triggers on push events to the main branch, builds the project, and deploys it to Vercel using the Vercel token and project ID stored as secrets.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Usage
+
+To run the project locally, clone the repository and install dependencies using `npm install`. Then, start the development server with `npm run dev`. Access the application at `http://localhost:3000`.

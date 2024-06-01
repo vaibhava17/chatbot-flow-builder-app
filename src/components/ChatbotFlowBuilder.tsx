@@ -49,7 +49,7 @@ const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
       else return edges.some((edge) => edge.target === node.id);
     });
     setHasAllEdges(allNodesHaveEdges);
-  }, [nodes, edges]);
+  }, [nodes, edges, setHasAllEdges]);
 
   // This useCallback hook creates a memoized callback function for handling changes to the nodes in the React Flow component.
   // It uses the applyNodeChanges function to apply the changes to the nodes array and updates the state accordingly.
@@ -79,7 +79,7 @@ const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
 
       setEdges((eds) => addEdge(params, eds));
     },
-    [edges]
+    [edges, setHasAllEdges]
   );
 
   // This function handles the drag over event when a draggable item is dragged over the React Flow component.
