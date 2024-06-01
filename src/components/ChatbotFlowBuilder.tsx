@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import ReactFlow, {
-  ReactFlowProvider,
   addEdge,
   MiniMap,
   Controls,
@@ -12,6 +11,7 @@ import ReactFlow, {
   OnNodesChange,
   OnEdgesChange,
   Connection,
+  Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { initialNodes, initialEdges } from "../utils/initialElements";
@@ -34,6 +34,33 @@ const ChatbotFlowBuilder: React.FC = () => {
     []
   );
 
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+
+    const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+    const type = event.dataTransfer.getData("application/reactflow");
+    const position = {
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    };
+
+    const newNode = {
+      id: `${type}-${nodes.length + 1}`,
+      type: "default",
+      position,
+      data: { label: `${type} Node` },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+  };
+
   return (
     <>
       <ReactFlow
@@ -43,11 +70,13 @@ const ChatbotFlowBuilder: React.FC = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={(event, node) => setSelectedNode(node)}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
         className="w-screen"
       >
-        <MiniMap />
+        {/* <MiniMap />
         <Controls />
-        <Background />
+        <Background /> */}
       </ReactFlow>
     </>
   );

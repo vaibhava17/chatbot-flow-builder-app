@@ -1,6 +1,7 @@
 "use client";
 import ChatbotFlowBuilder from "@/components/ChatbotFlowBuilder";
 import Header from "@/components/Header";
+import NodePanel from "@/components/NodePanel";
 import { ReactFlowProvider } from "reactflow";
 
 export default function Home() {
@@ -19,7 +20,9 @@ export default function Home() {
           <div className="w-full">
             <ChatbotFlowBuilder />
           </div>
-          <div>side bar</div>
+          <div>
+            <NodePanel />
+          </div>
         </div>
       </main>
     </ReactFlowProvider>
