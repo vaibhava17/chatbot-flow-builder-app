@@ -14,7 +14,7 @@ const CustomNode: React.FC<NodeProps> = ({ data }) => {
         <span>{data.label}</span>
         <MessageOutlined className="text-black" />
       </div>
-      <div className="p-2 rounded-b-lg text-black text-start">{data.value}</div>
+      <div className="p-2 rounded-b-lg text-black text-start whitespace-break-spaces">{data.value}</div>
       <Handle
         type="target"
         position={Position.Left}

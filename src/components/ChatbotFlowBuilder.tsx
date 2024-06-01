@@ -15,9 +15,9 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {
-  initialNodes,
   initialEdges,
   NodeStyles,
+  SelectedNodeStyles,
 } from "../utils/initialElements";
 import CustomNode from "./CustomNode";
 
@@ -25,14 +25,26 @@ const nodeTypes = {
   input: CustomNode,
 };
 
-const ChatbotFlowBuilder: React.FC = () => {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+interface ChatbotFlowBuilderProps {
+  selectedNode: Node | null;
+  setSelectedNode: (node: Node | null) => void;
+  onNodeChange: (node: Node) => void;
+  nodes: Node[];
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+}
+
+const ChatbotFlowBuilder: React.FC<ChatbotFlowBuilderProps> = ({
+  selectedNode,
+  setSelectedNode,
+  onNodeChange,
+  nodes,
+  setNodes,
+}) => {
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
+    [setNodes]
   );
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
@@ -52,19 +64,22 @@ const ChatbotFlowBuilder: React.FC = () => {
     event.preventDefault();
 
     const reactFlowBounds = event.currentTarget.getBoundingClientRect();
-    const type = event.dataTransfer.getData("application/reactflow");
+    const nodeType = JSON.parse(
+      event.dataTransfer.getData("application/reactflow")
+    );
     const position = {
       x: event.clientX - reactFlowBounds.left,
       y: event.clientY - reactFlowBounds.top,
     };
 
     const newNode = {
-      id: `${type}-${nodes.length + 1}`,
-      type: type,
+      id: `${nodeType.type}-${nodes.length + 1}`,
+      type: nodeType.type,
       position,
       data: {
         label: "Send Message",
         value: "textNode",
+        name: nodeType.name,
       },
       style: NodeStyles,
       sourcePosition: Position.Right,
@@ -74,6 +89,22 @@ const ChatbotFlowBuilder: React.FC = () => {
     setNodes((nds) => nds.concat(newNode));
   };
 
+  const handleNodeClick = (event: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+    setNodes((nds) =>
+      nds.map((item) => {
+        if (node.id == item.id) {
+          return {
+            ...item,
+            style: SelectedNodeStyles,
+          };
+        } else {
+          return item;
+        }
+      })
+    );
+  };
+
   return (
     <>
       <ReactFlow
@@ -81,8 +112,8 @@ const ChatbotFlowBuilder: React.FC = () => {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeClick={handleNodeClick}
         onConnect={onConnect}
-        onNodeClick={(event, node) => setSelectedNode(node)}
         onDragOver={onDragOver}
         onDrop={onDrop}
         nodeTypes={nodeTypes}
