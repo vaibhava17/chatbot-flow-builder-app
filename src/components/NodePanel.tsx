@@ -16,6 +16,8 @@ const nodeTypes: NodeTypeItem[] = [
 ];
 
 const NodePanel: React.FC = () => {
+  // This function handles the drag start event when a node is dragged from the sidebar. It sets the data transfer type and payload. 
+  // The payload has the node type information, which will be used to create a new node in the ChatbotFlowBuilder component.
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
     nodeType: NodeTypeItem
